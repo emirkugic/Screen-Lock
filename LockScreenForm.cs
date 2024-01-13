@@ -89,6 +89,8 @@ namespace ScreenLockApp
 
 
 
+        // bugs: crashes when images folder doesn't exist for txt (not important)
+        // doesnt fully exist after an image is taken, works in the bg
         private void TakePicture()
         {
             // Text
