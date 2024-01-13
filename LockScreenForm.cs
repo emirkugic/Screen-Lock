@@ -72,18 +72,16 @@ namespace ScreenLockApp
         {
             userInput += e.KeyChar;
 
-            // Check if the last entered characters match the unlock code
             if (userInput.Length >= unlockCode.Length)
             {
                 string lastInput = userInput.Substring(userInput.Length - unlockCode.Length);
 
                 if (lastInput.Equals(unlockCode))
                 {
-                    this.Close(); // Unlock the screen
+                    this.Close(); // unlocks the screen
                 }
                 else if (userInput.Length > unlockCode.Length)
                 {
-                    // take a picture if the user enters a wrong key
                     TakePicture();
                 }
             }
@@ -98,7 +96,7 @@ namespace ScreenLockApp
             string message = "Wrong key pressed\n";
             File.AppendAllText(textFilePath, message);
 
-            // Takes a picture
+            // takes a picture
             cameraService.TakePicture((bitmap) =>
             {
                 string imageDirectory = "images";

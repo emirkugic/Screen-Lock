@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ScreenLockApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ebcf0f2f963336ddafa18d8b68c4db468dbd39c")]
 [assembly: System.Reflection.AssemblyProductAttribute("ScreenLockApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ScreenLockApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
