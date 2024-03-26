@@ -10,9 +10,7 @@ namespace ScreenLockApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
             Application.Run(new LockScreenForm());
-
             Application.Exit();
         }
     }

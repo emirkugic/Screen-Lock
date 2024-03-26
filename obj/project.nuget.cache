@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "iV7bK4mQ2wacp4mxF28xo5J5st7t9Q11gsnkFkIciSsR30BrV95AmK8gi5fAfDwRdi4Uxm9lKrqJMK1KObDjfg==",
+  "dgSpecHash": "HvkCzJGL3nzlTa9NY29nxD53dMhtUsWH1d81VJYwke+Y8kDGcWrK7jJb3vh80ouRWoKOkN9u62GzXN5QDK53rQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\emir_\\Desktop\\ScreenLock\\ScreenLockApp.csproj",
+  "projectFilePath": "C:\\Users\\emir_\\Desktop\\Screen-Lock\\ScreenLockApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\emir_\\.nuget\\packages\\aforge\\2.2.5\\aforge.2.2.5.nupkg.sha512",
     "C:\\Users\\emir_\\.nuget\\packages\\aforge.imaging\\2.2.5\\aforge.imaging.2.2.5.nupkg.sha512",

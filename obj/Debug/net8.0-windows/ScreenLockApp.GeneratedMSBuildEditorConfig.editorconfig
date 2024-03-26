@@ -14,6 +14,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = ScreenLockApp
-build_property.ProjectDir = C:\Users\emir_\Desktop\ScreenLock\
+build_property.ProjectDir = C:\Users\emir_\Desktop\Screen-Lock\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

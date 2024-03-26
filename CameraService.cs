@@ -11,10 +11,8 @@ public class CameraService
 
     public CameraService()
     {
-        // Get available video devices
         videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
 
-        // Check for available cameras
         if (videoDevices.Count == 0)
             IsCameraAvailable = false;
         else

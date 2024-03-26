@@ -1,8 +1,10 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace ScreenLockApp
 {
@@ -17,12 +19,21 @@ namespace ScreenLockApp
         private System.Windows.Forms.Timer focusTimer;
         private CameraService cameraService;
 
+        private const int MYACTION_HOTKEY_ID = 1;
+
+
+
         public LockScreenForm()
         {
             InitializeComponents();
             hookID = SetHook(proc);
             InitializeFocusTimer();
             cameraService = new CameraService();
+            RegisterHotKey(this.Handle, MYACTION_HOTKEY_ID, 6, (int)Keys.Delete);
+            KillCtrlAltDelete();
+
+
+
         }
 
         private void InitializeComponents()
@@ -31,6 +42,7 @@ namespace ScreenLockApp
             this.FormBorderStyle = FormBorderStyle.None;
             this.TopMost = true;
             this.BackColor = Color.Gray;
+
             this.KeyPreview = true;
             Cursor.Hide();
 
@@ -64,61 +76,62 @@ namespace ScreenLockApp
         {
             if (!this.Focused)
             {
-                this.Activate(); // Bring the application back to focus
+                this.Activate();
             }
         }
 
         private void LockScreenForm_KeyPress(object sender, KeyPressEventArgs e)
         {
-            userInput += e.KeyChar;
+            userInput += e.KeyChar.ToString();
+
+            string debugFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "KeyPressLog.txt");
+            File.AppendAllText(debugFilePath, $"User Input: {userInput}{Environment.NewLine}");
 
             if (userInput.Length >= unlockCode.Length)
             {
                 string lastInput = userInput.Substring(userInput.Length - unlockCode.Length);
 
-                if (lastInput.Equals(unlockCode))
+                File.AppendAllText(debugFilePath, $"Last Input: {lastInput}{Environment.NewLine}");
+
+                if (lastInput.Equals(unlockCode, StringComparison.OrdinalIgnoreCase))
                 {
-                    this.Close(); // unlocks the screen
+                    File.AppendAllText(debugFilePath, "Unlocking...{Environment.NewLine}");
+                    this.Close(); // Unlocks the screen
                 }
                 else if (userInput.Length > unlockCode.Length)
                 {
+                    userInput = userInput.Substring(1); // Keep the last 'unlockCode.Length' characters
                     TakePicture();
                 }
             }
         }
 
-
-
-        // bugs: crashes when images folder doesn't exist for txt (not important)
-        // doesnt fully exist after an image is taken, works in the bg
         private void TakePicture()
         {
-            // Text
-            string textFilePath = "images/log.txt";
-            string message = "Wrong key pressed\n";
-            File.AppendAllText(textFilePath, message);
 
-            // takes a picture
-            cameraService.TakePicture((bitmap) =>
-            {
-                string imageDirectory = "images";
-                Directory.CreateDirectory(imageDirectory); // create directory if it doesn't exist
-
-                string imageName = $"capture_{DateTime.Now.Ticks}.jpg";
-                string imagePath = Path.Combine(imageDirectory, imageName);
-
-                bitmap.Save(imagePath);
-                Console.WriteLine($"Image saved: {imageName}");
-            });
         }
 
-
-        protected override void OnClosed(EventArgs e)
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
+
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+            }
+            base.OnFormClosing(e);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            EnableCTRLALTDEL();
+
+            UnregisterHotKey(this.Handle, MYACTION_HOTKEY_ID);
             UnhookWindowsHookEx(hookID);
             focusTimer.Stop();
-            base.OnClosed(e);
+            base.Dispose(disposing);
         }
+
+
 
         private static IntPtr SetHook(LowLevelKeyboardProc proc)
         {
@@ -136,18 +149,25 @@ namespace ScreenLockApp
                 int vkCode = Marshal.ReadInt32(lParam);
                 var key = (Keys)vkCode;
 
+
                 if (key == Keys.LControlKey || key == Keys.RControlKey ||
                     key == Keys.LWin || key == Keys.RWin ||
                     key == Keys.LMenu || key == Keys.RMenu)
                 {
-                    return (IntPtr)1; // suppress key
+                    return (IntPtr)1;
                 }
             }
             return CallNextHookEx(hookID, nCode, wParam, lParam);
         }
 
-        private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN = 0x0100;
+        private const int WH_KEYBOARD_LL = 13;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -161,5 +181,66 @@ namespace ScreenLockApp
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+
+
+
+        public void KillCtrlAltDelete()
+        {
+            string keyValueInt = "1";
+            string subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System";
+            try
+            {
+                using (RegistryKey regkey = Registry.CurrentUser.CreateSubKey(subKey))
+                {
+                    regkey.SetValue("DisableTaskMgr", keyValueInt);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        public static void EnableCTRLALTDEL()
+        {
+            string subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System";
+            try
+            {
+                using (RegistryKey rk = Registry.CurrentUser)
+                {
+                    RegistryKey sk1 = rk.OpenSubKey(subKey);
+                    if (sk1 != null)
+                        rk.DeleteSubKeyTree(subKey);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        public void KillStartMenu()
+        {
+            int hwnd = FindWindow("Shell_TrayWnd", "");
+            ShowWindow(hwnd, SW_HIDE);
+        }
+
+        public static void ShowStartMenu()
+        {
+            int hwnd = FindWindow("Shell_TrayWnd", "");
+            ShowWindow(hwnd, SW_SHOW);
+        }
+
+        [DllImport("user32.dll")]
+        private static extern int FindWindow(string className, string windowText);
+
+        [DllImport("user32.dll")]
+        private static extern int ShowWindow(int hwnd, int command);
+
+        private const int SW_HIDE = 0;
+        private const int SW_SHOW = 1;
+
+
     }
 }

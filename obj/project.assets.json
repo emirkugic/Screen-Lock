@@ -143,11 +143,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\emir_\\Desktop\\ScreenLock\\ScreenLockApp.csproj",
+      "projectUniqueName": "C:\\Users\\emir_\\Desktop\\Screen-Lock\\ScreenLockApp.csproj",
       "projectName": "ScreenLockApp",
-      "projectPath": "C:\\Users\\emir_\\Desktop\\ScreenLock\\ScreenLockApp.csproj",
+      "projectPath": "C:\\Users\\emir_\\Desktop\\Screen-Lock\\ScreenLockApp.csproj",
       "packagesPath": "C:\\Users\\emir_\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\emir_\\Desktop\\ScreenLock\\obj\\",
+      "outputPath": "C:\\Users\\emir_\\Desktop\\Screen-Lock\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\emir_\\AppData\\Roaming\\NuGet\\NuGet.Config"
